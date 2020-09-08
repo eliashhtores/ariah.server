@@ -1,6 +1,18 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 const router = express.Router();
 const Appointment = require('../models/appointment');
+
+router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.json())
+
+router.all('*', function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -14,6 +26,11 @@ router.get('/', async (req, res) => {
 
 // Getting one
 router.get('/:id', getAppointment, (req, res) => {
+    res.json(res.appointment);
+});
+
+// Find by date
+router.get('/admin/:date', getAppointmentsByDate, (req, res) => {
     res.json(res.appointment);
 });
 
@@ -71,6 +88,19 @@ async function getAppointment(req, res, next) {
         appointment = await Appointment.findById(req.params.id);
         if (appointment == null) {
             return res.status(404).json({ message: 'Appointment not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+    res.appointment = appointment;
+    next();
+}
+
+async function getAppointmentsByDate(req, res, next) {
+    try {
+        appointment = await Appointment.find({ "services.date": { $gte: req.params.date } });
+        if (appointment.length === 0) {
+            return res.status(404).json({ message: 'No appointments found' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });

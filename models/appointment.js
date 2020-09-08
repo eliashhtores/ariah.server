@@ -8,10 +8,6 @@ const appointmentSchema = new mongoose.Schema({
     email: {
         type: String
     },
-    appointmentDate: {
-        type: String,
-        required: true
-    },
     services: {
         type: Array,
         required: true
