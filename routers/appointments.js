@@ -38,6 +38,7 @@ router.get('/admin/:date', getAppointmentsByDate, (req, res) => {
 router.post('/', async (req, res) => {
     const appointment = new Appointment({
         name: req.body.name,
+        phone: req.body.phone,
         email: req.body.email,
         appointmentDate: req.body.appointmentDate,
         services: req.body.services
@@ -54,6 +55,9 @@ router.post('/', async (req, res) => {
 router.patch('/:id', getAppointment, async (req, res) => {
     if (req.body.name != null) {
         res.appointment.name = req.body.name;
+    }
+    if (req.body.phone != null) {
+        res.appointment.phone = req.body.phone;
     }
     if (req.body.email != null) {
         res.appointment.email = req.body.email;
