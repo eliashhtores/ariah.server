@@ -16,7 +16,7 @@ router.all('*', function (req, res, next) {
 
 // End point to Stripe Checkout
 const stripe = require('stripe')(process.env.STRIPE_KEY);
-router.post(process.env.LOCAL_SERVER + '/create-checkout-session', async (req, res) => {
+router.post('/create-checkout-session', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
