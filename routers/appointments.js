@@ -14,6 +14,31 @@ router.all('*', function (req, res, next) {
     next();
 });
 
+// End point to Stripe Checkout
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+router.post('/create-checkout-session', async (req, res) => {
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+            {
+                price_data: {
+                    currency: "mxn",
+                    product_data: {
+                        name: "Cita en Ariah Studio",
+                    },
+                    unit_amount: 5000,
+                },
+                quantity: 1,
+            },
+        ],
+        mode: "payment",
+        success_url: "http://127.0.0.1:5500/success.html",
+        cancel_url: "https://example.com/cancel",
+    });
+
+    res.json({ id: session.id });
+});
+
 // Getting all
 router.get('/', async (req, res) => {
     try {

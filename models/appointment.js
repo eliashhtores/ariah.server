@@ -6,8 +6,8 @@ const appointmentSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     email: {
         type: String
