@@ -26,7 +26,7 @@ router.post('/create-checkout-session', async (req, res) => {
                     product_data: {
                         name: "Cita en Ariah Studio",
                     },
-                    unit_amount: 5000,
+                    unit_amount: 1000,
                 },
                 quantity: 1,
             },
