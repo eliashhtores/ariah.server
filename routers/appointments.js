@@ -16,7 +16,7 @@ router.all('*', function (req, res, next) {
 
 // End point to Stripe Checkout
 const stripe = require('stripe')(process.env.STRIPE_KEY);
-router.post('/create-checkout-session', async (req, res) => {
+router.post(process.env.LOCAL_SERVER + '/create-checkout-session', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -32,14 +32,14 @@ router.post('/create-checkout-session', async (req, res) => {
             },
         ],
         mode: "payment",
-        success_url: "http://127.0.0.1:5500/success.html",
-        cancel_url: "https://example.com/cancel",
+        success_url: process.env.LOCAL_SERVER + '/success.html',
+        cancel_url: process.env.LOCAL_SERVER + '/cancel.html',
     });
 
     res.json({ id: session.id });
 });
 
-// Getting all
+// Getting all appointments
 router.get('/', async (req, res) => {
     try {
         const appointments = await Appointment.find();
@@ -49,17 +49,17 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Getting one
+// Getting one appointment
 router.get('/:id', getAppointment, (req, res) => {
     res.json(res.appointment);
 });
 
-// Find by date
+// Find appointments by date
 router.get('/admin/:date', getAppointmentsByDate, (req, res) => {
     res.json(res.appointment);
 });
 
-// Creating one
+// Creating appointment
 router.post('/', async (req, res) => {
     const appointment = new Appointment({
         name: req.body.name,
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Updating one
+// Updating appointment
 router.patch('/:id', getAppointment, async (req, res) => {
     if (req.body.name != null) {
         res.appointment.name = req.body.name;
@@ -102,7 +102,7 @@ router.patch('/:id', getAppointment, async (req, res) => {
     }
 });
 
-// Deleting one
+// Deleting appointment
 router.delete('/:id', getAppointment, async (req, res) => {
     try {
         await res.appointment.remove();
