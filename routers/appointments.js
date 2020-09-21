@@ -17,6 +17,7 @@ router.all('*', function (req, res, next) {
 // End point to Stripe Checkout
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 router.post('/create-checkout-session', async (req, res) => {
+    const quantity = req.body.data;
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [
@@ -28,7 +29,7 @@ router.post('/create-checkout-session', async (req, res) => {
                     },
                     unit_amount: 5000,
                 },
-                quantity: 1,
+                quantity: quantity,
             },
         ],
         mode: "payment",
