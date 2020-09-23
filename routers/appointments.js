@@ -25,7 +25,7 @@ router.post('/create-checkout-session', async (req, res) => {
                 price_data: {
                     currency: "mxn",
                     product_data: {
-                        name: "Cita en Ariah Studio",
+                        name: "Cita en Ariah Studio (Pago no reembolsable)",
                     },
                     unit_amount: 5000,
                 },
