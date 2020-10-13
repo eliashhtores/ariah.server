@@ -128,7 +128,7 @@ async function getAppointment(req, res, next) {
 
 async function getAppointmentsByDate(req, res, next) {
     try {
-        appointment = await Appointment.find({ "services.date": { $gte: req.params.date } }).sort({ "services.date": 1 });
+        appointment = await Appointment.find({ "services.date": { $gte: req.params.date } }).sort({ "services.date": 1, "services.time": 1 });
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
         }
