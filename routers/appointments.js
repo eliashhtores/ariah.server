@@ -60,6 +60,11 @@ router.get('/admin/:date', getAppointmentsByDate, (req, res) => {
     res.json(res.appointment);
 });
 
+// Check for duplicated appointments
+router.get('/check/:name/:date/:time', getAppointmentsByService, (req, res) => {
+    res.json(res.appointment);
+});
+
 // Creating appointment
 router.post('/', async (req, res) => {
     const appointment = new Appointment({
@@ -129,6 +134,19 @@ async function getAppointment(req, res, next) {
 async function getAppointmentsByDate(req, res, next) {
     try {
         appointment = await Appointment.find({ "services.date": { $gte: req.params.date } }).sort({ "services.date": 1, "services.time": 1 });
+        if (appointment.length === 0) {
+            return res.status(404).json({ message: 'No appointments found', status: 404 });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+    res.appointment = appointment;
+    next();
+}
+
+async function getAppointmentsByService(req, res, next) {
+    try {
+        appointment = await Appointment.find({ "services.name": { $eq: req.params.name }, "services.date": { $eq: req.params.date }, "services.time": { $eq: req.params.time } });
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
         }
