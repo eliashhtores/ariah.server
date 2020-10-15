@@ -14,32 +14,6 @@ router.all('*', function (req, res, next) {
     next();
 });
 
-// End point to Stripe Checkout
-const stripe = require('stripe')(process.env.STRIPE_KEY);
-router.post('/create-checkout-session', async (req, res) => {
-    const quantity = req.body.data;
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-            {
-                price_data: {
-                    currency: "mxn",
-                    product_data: {
-                        name: "Cita en Ariah Studio (Pago no reembolsable)",
-                    },
-                    unit_amount: 5000,
-                },
-                quantity: quantity,
-            },
-        ],
-        mode: "payment",
-        success_url: process.env.FRONT_END + '/success.html',
-        cancel_url: process.env.FRONT_END + '/cancel.html',
-    });
-
-    res.json({ id: session.id });
-});
-
 // Getting all appointments
 router.get('/', async (req, res) => {
     try {
