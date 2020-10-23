@@ -30,12 +30,17 @@ router.get('/:id', getAppointment, (req, res) => {
 });
 
 // Find appointments by date
-router.get('/admin/:date', getAppointmentsByDate, (req, res) => {
+router.get('/admin/:date', getAdminAppointments, (req, res) => {
     res.json(res.appointment);
 });
 
 // Check for duplicated appointments
-router.get('/check/:name/:date/:time', getAppointmentsByService, (req, res) => {
+router.get('/check/:name/:date/:time', getAppointmentsByDateTime, (req, res) => {
+    res.json(res.appointment);
+});
+
+// Check available times based on date
+router.get('/check/:name/:date/', getAppointmentsByDate, (req, res) => {
     res.json(res.appointment);
 });
 
@@ -105,9 +110,23 @@ async function getAppointment(req, res, next) {
     next();
 }
 
-async function getAppointmentsByDate(req, res, next) {
+async function getAdminAppointments(req, res, next) {
     try {
         appointment = await Appointment.find({ "services.date": { $gte: req.params.date } }).sort({ "services.date": 1, "services.time": 1 });
+        if (appointment.length === 0) {
+            return res.status(404).json({ message: 'No appointments found', status: 404 });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+    console.log(appointment);
+    res.appointment = appointment;
+    next();
+}
+
+async function getAppointmentsByDate(req, res, next) {
+    try {
+        appointment = await Appointment.distinct("services.time", { "services.name": { $eq: req.params.name }, "services.date": { $eq: req.params.date } });
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
         }
@@ -118,7 +137,7 @@ async function getAppointmentsByDate(req, res, next) {
     next();
 }
 
-async function getAppointmentsByService(req, res, next) {
+async function getAppointmentsByDateTime(req, res, next) {
     try {
         appointment = await Appointment.find({ "services.name": { $eq: req.params.name }, "services.date": { $eq: req.params.date }, "services.time": { $eq: req.params.time } });
         if (appointment.length === 0) {
