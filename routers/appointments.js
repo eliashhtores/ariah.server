@@ -119,7 +119,6 @@ async function getAdminAppointments(req, res, next) {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-    console.log(appointment);
     res.appointment = appointment;
     next();
 }
