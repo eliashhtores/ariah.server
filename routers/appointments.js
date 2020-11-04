@@ -34,13 +34,8 @@ router.get('/admin/:date', getAdminAppointments, (req, res) => {
     res.json(res.appointment);
 });
 
-// Check for duplicated appointments
-router.get('/check/:name/:date/:time', getAppointmentsByDateTime, (req, res) => {
-    res.json(res.appointment);
-});
-
 // Check available times based on date
-router.get('/check/:name/:date/', getAppointmentsByDate, (req, res) => {
+router.get('/check/:short/:date/', getAppointmentsByDate, (req, res) => {
     res.json(res.appointment);
 });
 
@@ -125,20 +120,7 @@ async function getAdminAppointments(req, res, next) {
 
 async function getAppointmentsByDate(req, res, next) {
     try {
-        appointment = await Appointment.distinct("services.time", { "services.name": { $eq: req.params.name }, "services.date": { $eq: req.params.date } });
-        if (appointment.length === 0) {
-            return res.status(404).json({ message: 'No appointments found', status: 404 });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-    res.appointment = appointment;
-    next();
-}
-
-async function getAppointmentsByDateTime(req, res, next) {
-    try {
-        appointment = await Appointment.find({ "services.name": { $eq: req.params.name }, "services.date": { $eq: req.params.date }, "services.time": { $eq: req.params.time } });
+        appointment = await Appointment.distinct("services.time", { "services.short": { $eq: req.params.short }, "services.date": { $eq: req.params.date } });
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
         }
