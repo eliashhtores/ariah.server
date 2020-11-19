@@ -121,7 +121,6 @@ async function getAdminAppointments(req, res, next) {
 async function getAppointmentsByDate(req, res, next) {
     try {
         appointment = await Appointment.distinct("services.time", { "services.short": { $eq: req.params.short }, "services.date": { $eq: req.params.date } });
-        ]);
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
         }
