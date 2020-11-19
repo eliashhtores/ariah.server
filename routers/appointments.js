@@ -120,9 +120,7 @@ async function getAdminAppointments(req, res, next) {
 
 async function getAppointmentsByDate(req, res, next) {
     try {
-        appointment = await Appointment.aggregate([
-            { "$match": { "services.short": req.params.short, "services.date": req.params.date } },
-            { "$group": { _id: { "time": "$services.time", "short": "$services.short" } } }
+        appointment = await Appointment.distinct("services.time", { "services.short": { $eq: req.params.short }, "services.date": { $eq: req.params.date } });
         ]);
         if (appointment.length === 0) {
             return res.status(404).json({ message: 'No appointments found', status: 404 });
